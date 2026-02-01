@@ -1,1 +1,11 @@
+# Dependencies
+node_modules/
+
+# Secrets
+.env
+.env.*
+secrets/
+
+# Misc
 .DS_Store
+.vscode/
