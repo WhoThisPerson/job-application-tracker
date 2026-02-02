@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "googleapis": "^171.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.0"
   }
 }
