@@ -9,7 +9,7 @@ import { createPromptOptions } from "./prompts.ts";
 function displayLoadOrCreateMenu() {
     console.log("\n=== Job Application Tracker ===");
     console.log("L) Load Existing Spreadsheet");
-    console.log("C) Create New Spreadsheet");
+    console.log("N) Create New Spreadsheet");
     console.log("Q) Quit");
     console.log("==============================\n");
 }
@@ -49,7 +49,8 @@ export async function main() {
         switch (choice) {
             // Will attempt to load existing spreadsheet 
             case "L": {
-            
+                
+                break;
             }
             // Will setup a new spreadsheet
             case "N": {
