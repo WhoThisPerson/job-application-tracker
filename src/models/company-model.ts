@@ -4,8 +4,14 @@
  */
 class Company {
 
-    /** The name of the company
-     * Also serves as the primary key for the Company model
+    /**
+     * The id of the company
+     * Serves as the primary key for the Company model
+     */
+    private id: number;
+
+    /** 
+     * The name of the company
      */
     private company_name: string;
 
@@ -30,6 +36,7 @@ class Company {
     /**
    * Creates a new Company instance.
    * @param params - Initialization parameters
+   * @param params.id - The unique identifier of the company
    * @param params.company_name - The company name
    * @param params.company_portal - Optional portal URL
    * @param params.account_email - Optional email
@@ -37,18 +44,25 @@ class Company {
    * @param params.account_password - Optional password
    */
     constructor(params: {
+        id: number,
         company_name: string,
         company_portal?: string,
         account_email?: string,
         account_username?: string,
         account_password?: string
     }) {
-        this.company_name = params.company_name.trim()
-        this.company_portal = params.company_portal ?? "N/A"
-        this.account_email = params.account_email ?? "N/A"
-        this.account_username = params.account_username ?? "N/A"
-        this.account_password = params.account_password ?? "N/A"
+        this.id = params.id;
+        this.company_name = params.company_name.trim();
+        this.company_portal = params.company_portal ?? "N/A";
+        this.account_email = params.account_email ?? "N/A";
+        this.account_username = params.account_username ?? "N/A";
+        this.account_password = params.account_password ?? "N/A";
     };
+
+    /** Retrieve company id */
+    get companyId(): number { return this.id; }
+    /** Modify company id */
+    set companyId(id: number) { this.id = id; }
 
     /** Retrieve company name */
     get companyName(): string { return this.company_name; }
