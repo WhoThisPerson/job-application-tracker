@@ -1,6 +1,10 @@
 import JobApplication from "../models/job-application.ts";
 import { TrackerState } from "../models/tracker-state";
 import { createPromptOptions } from "./prompts.ts";
+import ApplicationStatus from "../models/application-status.ts";
+import Company from "../models/company-model.ts";
+
+const prompts = createPromptOptions();
 
 /**
  * Displays the initial menu options to the user
@@ -49,14 +53,65 @@ function viewAllApplications(jobApplications: JobApplication[]) {
     }
     console.log("+----+----------------+----------------+----------------+----------------+");
 }
+/**
+ * Adds a new company to the state
+ * @param company_name - The name of the company
+ * @param state - The current state of the application, which includes the list of job applications and companies
+ */
+async function addNewCompany(company_name: string, state: TrackerState) {
+
+    let id = state.numCompanies + 1;
+    let company_portal = await prompts.askNonEmpty("Enter company portal URL or 'N/A' if there isn't one");
+    let account_email = await prompts.askNonEmpty("Enter company portal email or 'N/A' if there isn't one");
+    let account_username = await prompts.askNonEmpty("Enter company portal username or 'N/A' if there isn't one");
+    let account_password = await prompts.askNonEmpty("Enter company portal password or 'N/A' if there isn't one");
+
+    let new_company = new Company({
+        id,
+        company_name,
+        company_portal,
+        account_email,
+        account_username,
+        account_password
+    })
+
+    // Add comapny details to state
+    state.companies.set(company_name, new_company);
+    // Update number of companies
+    state.numCompanies++;
+}
 
 /**
  * Adds a new job application to the state.
  * Function will also add the company to the state.companies array if it doesn't already exist.
  * @param state - The current state of the application, which includes the list of job applications and companies
  */
-function addNewApplication(state: TrackerState) {
-    console.log("Add New Application functionality is not implemented yet.");
+async function addNewApplication(state: TrackerState) {
+    
+    let id = state.numApplications + 1;
+    const company_name = await prompts.askNonEmpty("Enter company name");
+
+    // Will add company info to trackerstate if company not previously found
+    if (!state.companies.has(company_name)) {
+        await addNewCompany(company_name, state)
+    }
+
+    const position_title = await prompts.askNonEmpty("Enter position title");
+    const status = ApplicationStatus.APPLIED;
+    const application_date = new Date();
+
+      const newApplication = new JobApplication({
+            id,
+            company_name,
+            position_title,
+            application_date,
+            status
+        });
+
+    // Add new application
+    state.jobApplications.push(newApplication);
+    // Update numebr of applications
+    state.numApplications++;
 }
 
 /**
@@ -65,10 +120,9 @@ function addNewApplication(state: TrackerState) {
  * or create a new one, then proceeds to the main menu.
  */
 export async function main() {
-    
+
     // Variable that maintains the local state of the application
     let state: TrackerState | null = null;
-    const prompts = createPromptOptions();
 
     // Preliminary loop to load or create a spreadsheet
     while (!state) {
@@ -83,7 +137,11 @@ export async function main() {
             }
             // Will setup a new spreadsheet
             case "N": {
-                state = { companies: [], jobApplications: [] };
+                state = { 
+                    companies: new Map<string, Company>(), 
+                    jobApplications: [], 
+                    numApplications: 0, 
+                    numCompanies: 0};
                 console.log("New spreadsheet created...");
                 break;
             }
@@ -111,7 +169,7 @@ export async function main() {
             // Add new job application
             case "A": {
                 console.log("Adding Application...");
-                addNewApplication(state);
+                await addNewApplication(state);
                 break;
             }
             // Edit existing job application

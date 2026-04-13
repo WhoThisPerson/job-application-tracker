@@ -6,11 +6,20 @@ import JobApplication from './job-application';
  */
 export type TrackerState = {
     /**
-     * Maintains list of companies being tracked
+     * Maintains mapping of company name -> Company object
+     * Done to achieve faster lookup and alphabetical sorting
      */
-    companies: Company[];
+    companies: Map<string, Company>;
     /**
      * Maintains list of job applications being tracked
      */
     jobApplications: JobApplication[];
+    /**
+     * Tracks number of companies
+     */
+    numCompanies: number;
+    /**
+     * Tracks number of applications
+     */
+    numApplications: number;
 }
